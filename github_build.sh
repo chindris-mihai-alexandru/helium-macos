@@ -19,17 +19,16 @@ cd "$_src_dir"
 echo $(date +%s) | tee -a "$_root_dir/build_times_$_target_cpu.log"
 echo "status=running" >> $GITHUB_OUTPUT
 
-# Force sccache to use local disk cache. The GHA cache backend auto-detects
-# GitHub Actions environment and tries to use ACTIONS_CACHE_URL/ACTIONS_RESULTS_URL,
-# which aren't reliably available in composite actions on self-hosted runners.
-# Stop any existing server so it restarts with clean env.
+# Disable sccache: the GHA cache backend fails on self-hosted runners because
+# ACTIONS_CACHE_URL/ACTIONS_RESULTS_URL aren't reliably available in composite
+# actions. Remove cc_wrapper from args.gn and regenerate build files without it.
+# On subsequent builds, sccache local disk cache will still work once the runner
+# environment is properly configured.
 sccache --stop-server 2>/dev/null || true
-unset ACTIONS_CACHE_URL ACTIONS_RESULTS_URL ACTIONS_RUNTIME_TOKEN
-unset SCCACHE_GHA_ENABLED SCCACHE_GHA_VERSION SCCACHE_GHA_CACHE_URL SCCACHE_GHA_RUNTIME_TOKEN
-export SCCACHE_DIR="$HOME/.cache/sccache"
-export SCCACHE_CACHE_SIZE="50G"
-sccache --start-server
-sccache --show-stats
+if grep -q 'cc_wrapper' out/Default/args.gn; then
+  sed -i '' '/cc_wrapper/d' out/Default/args.gn
+  ./out/Default/gn gen out/Default --fail-on-unused-args
+fi
 
 set +e
 
