@@ -19,14 +19,17 @@ cd "$_src_dir"
 echo $(date +%s) | tee -a "$_root_dir/build_times_$_target_cpu.log"
 echo "status=running" >> $GITHUB_OUTPUT
 
-# Force sccache to use local disk cache instead of GitHub Actions cache.
-# The GHA cache backend requires ACTIONS_CACHE_URL which isn't reliably
-# available in composite actions on self-hosted runners.
+# Force sccache to use local disk cache. The GHA cache backend auto-detects
+# GitHub Actions environment and tries to use ACTIONS_CACHE_URL/ACTIONS_RESULTS_URL,
+# which aren't reliably available in composite actions on self-hosted runners.
+# Stop any existing server so it restarts with clean env.
 sccache --stop-server 2>/dev/null || true
-unset ACTIONS_CACHE_URL ACTIONS_RUNTIME_TOKEN SCCACHE_GHA_ENABLED SCCACHE_GHA_VERSION
+unset ACTIONS_CACHE_URL ACTIONS_RESULTS_URL ACTIONS_RUNTIME_TOKEN
+unset SCCACHE_GHA_ENABLED SCCACHE_GHA_VERSION SCCACHE_GHA_CACHE_URL SCCACHE_GHA_RUNTIME_TOKEN
 export SCCACHE_DIR="$HOME/.cache/sccache"
 export SCCACHE_CACHE_SIZE="50G"
-export SCCACHE_WEBDAV_KEY_PREFIX="$_target_cpu"
+sccache --start-server
+sccache --show-stats
 
 set +e
 
