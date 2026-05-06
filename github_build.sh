@@ -19,16 +19,12 @@ cd "$_src_dir"
 echo $(date +%s) | tee -a "$_root_dir/build_times_$_target_cpu.log"
 echo "status=running" >> $GITHUB_OUTPUT
 
-# Disable sccache: the GHA cache backend fails on self-hosted runners because
-# ACTIONS_CACHE_URL/ACTIONS_RESULTS_URL aren't reliably available in composite
-# actions. Remove cc_wrapper from args.gn and regenerate build files without it.
-# On subsequent builds, sccache local disk cache will still work once the runner
-# environment is properly configured.
-sccache --stop-server 2>/dev/null || true
-if grep -q 'cc_wrapper' out/Default/args.gn; then
-  sed -i '' '/cc_wrapper/d' out/Default/args.gn
-  ./out/Default/gn gen out/Default --fail-on-unused-args
+if ! env | grep -q SCCACHE; then
+    export SCCACHE_GHA_ENABLED=on
+    export SCCACHE_GHA_VERSION="$_target_cpu"
 fi
+
+export SCCACHE_WEBDAV_KEY_PREFIX="$_target_cpu"
 
 set +e
 
