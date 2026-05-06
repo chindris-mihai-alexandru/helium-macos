@@ -20,7 +20,7 @@ fi
 
 cp "$_main_repo/flags.gn" "$_src_dir/out/Default/args.gn"
 cat "$_root_dir/flags.macos.gn" >> "$_src_dir/out/Default/args.gn"
-# cc_wrapper="sccache" disabled: GHA cache backend fails on self-hosted runners
+# cc_wrapper disabled: GHA cache backend fails on self-hosted runners
 # echo 'cc_wrapper="sccache"' >> "$_src_dir/out/Default/args.gn"
 
 if ! [ -z "${PROD_MACOS_SPARKLE_ED_PUB_KEY-}" ]; then
