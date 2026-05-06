@@ -19,11 +19,13 @@ cd "$_src_dir"
 echo $(date +%s) | tee -a "$_root_dir/build_times_$_target_cpu.log"
 echo "status=running" >> $GITHUB_OUTPUT
 
-# sccache disabled: GHA cache backend fails on self-hosted runners
+# Limit parallelism to avoid OOM on GitHub-hosted runners (7GB RAM)
+# Use 2 parallel jobs to stay within memory limits during linking
+_jobs=2
 
 set +e
 
-timeout -k 7m -s SIGTERM ${_remaining_time:-19680}s ninja -C out/Default chrome chromedriver # 328 m as default $_remaining_time
+timeout -k 7m -s SIGTERM ${_remaining_time:-19680}s ninja -C out/Default chrome chromedriver -j${_jobs}
 
 _error_code="${?}"
 if [[ "$_error_code" -eq 124 ]]; then

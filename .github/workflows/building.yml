@@ -147,3 +147,113 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       os: ${{ inputs.os }}
+
+  build_job_11:
+    needs: build_job_10
+    if: ${{needs.build_job_10.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_12:
+    needs: build_job_11
+    if: ${{needs.build_job_11.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_13:
+    needs: build_job_12
+    if: ${{needs.build_job_12.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_14:
+    needs: build_job_13
+    if: ${{needs.build_job_13.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_15:
+    needs: build_job_14
+    if: ${{needs.build_job_14.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_16:
+    needs: build_job_15
+    if: ${{needs.build_job_15.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_17:
+    needs: build_job_16
+    if: ${{needs.build_job_16.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_18:
+    needs: build_job_17
+    if: ${{needs.build_job_17.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_19:
+    needs: build_job_18
+    if: ${{needs.build_job_18.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}
+
+  build_job_20:
+    needs: build_job_19
+    if: ${{needs.build_job_19.outputs.status == 'running'}}
+    uses: ./.github/workflows/build-step.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      arch: ${{ inputs.arch }}
+      os: ${{ inputs.os }}

@@ -1,4 +1,9 @@
 name: Prepare build environment
+inputs:
+  arch:
+    required: false
+    type: string
+    default: 'arm64'
 runs:
   using: composite
   steps:
@@ -9,11 +14,86 @@ runs:
     - name: Copy GitHub specific scripts to git-root folder
       run: cp -va ./.github/scripts/ ./ ; date +%s > ./epoch_job_start.txt
       shell: bash
+
+    - name: Free disk space (remove unnecessary software)
+      shell: bash
+      run: |
+        echo "=== Disk space BEFORE cleanup ==="
+        df -h /
+
+        # Remove all Xcode versions except the newest (keep for SDK headers)
+        echo "Removing extra Xcode versions..."
+        KEEP_XCODE=""
+        for xc in /Applications/Xcode_16.2.app /Applications/Xcode_16.1.app /Applications/Xcode_15.4.app /Applications/Xcode_15.3.app /Applications/Xcode.app; do
+          if [ -d "$xc" ] && [ -z "$KEEP_XCODE" ]; then
+            KEEP_XCODE="$xc"
+          fi
+        done
+
+        for xc in /Applications/Xcode*.app; do
+          if [ -d "$xc" ] && [ "$xc" != "$KEEP_XCODE" ]; then
+            echo "Removing $xc..."
+            sudo rm -rf "$xc"
+          fi
+        done
+        echo "Kept Xcode: $KEEP_XCODE"
+
+        # Remove Android SDK (~10GB)
+        sudo rm -rf ${ANDROID_HOME:-/dev/null} || true
+        sudo rm -rf ~/Library/Android || true
+
+        # Remove browsers (~3GB)
+        sudo rm -rf "/Applications/Google Chrome.app" || true
+        sudo rm -rf "/Applications/Google Chrome for Testing.app" || true
+        sudo rm -rf "/Applications/Microsoft Edge.app" || true
+        sudo rm -rf "/Applications/Firefox.app" || true
+        sudo rm -rf /usr/local/share/chromedriver* || true
+        sudo rm -rf /usr/local/share/edge_driver || true
+
+        # Remove .NET SDK (~2GB)
+        sudo rm -rf /usr/local/share/dotnet || true
+
+        # Remove Go (~1GB)
+        sudo rm -rf /usr/local/go* || true
+        sudo rm -rf ~/go || true
+
+        # Remove Java JDKs (~2GB)
+        sudo rm -rf /Library/Java/JavaVirtualMachines/* || true
+
+        # Remove Rust (~1GB)
+        sudo rm -rf ~/.cargo || true
+        sudo rm -rf ~/.rustup || true
+
+        # Remove Ruby versions (~1GB)
+        sudo rm -rf ~/.rubies || true
+
+        # Remove PowerShell (~500MB)
+        sudo rm -rf /usr/local/share/powershell || true
+        sudo rm -rf /usr/local/microsoft || true
+
+        # Remove iOS/tvOS/watchOS/visionOS simulators (~5GB+)
+        sudo xcrun simctl delete all 2>/dev/null || true
+        sudo rm -rf ~/Library/Developer/CoreSimulator || true
+
+        # Remove Homebrew cache
+        rm -rf ~/Library/Caches/Homebrew || true
+
+        # Remove CodeQL (~1GB)
+        sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+
+        # Remove cached tool versions we don't need
+        sudo rm -rf /opt/hostedtoolcache/node || true
+        sudo rm -rf /opt/hostedtoolcache/Python/3.10* || true
+        sudo rm -rf /opt/hostedtoolcache/Python/3.11* || true
+        sudo rm -rf /opt/hostedtoolcache/Python/3.12* || true
+        sudo rm -rf /opt/hostedtoolcache/go || true
+        sudo rm -rf /opt/hostedtoolcache/Ruby || true
+
+        echo "=== Disk space AFTER cleanup ==="
+        df -h /
+
     - name: Prepare Xcode
       run: ./github_prepare_xcode.sh
-      shell: bash
-    - name: Cleanup Android Related Stuff
-      run: sudo rm -rf $ANDROID_HOME
       shell: bash
     - name: Disable Spotlight
       run: sudo mdutil -a -i off
