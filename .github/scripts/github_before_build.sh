@@ -34,6 +34,40 @@ echo 'chrome_pgo_phase=2' >> "$_src_dir/out/Default/args.gn"
 # Use macOS 14.0 deployment target for maximum compatibility
 echo 'mac_deployment_target="14.0"' >> "$_src_dir/out/Default/args.gn"
 
+# Create fallback sys/fileport.h header for macOS 15.2 SDK compatibility
+mkdir -p "$_src_dir/sys"
+cat > "$_src_dir/sys/fileport.h" << 'HEADER_EOF'
+// Fallback header for missing sys/fileport.h on macOS 15.2 SDK
+// This header provides minimal definitions for fileport functionality
+
+#ifndef SYS_FILEPORT_H_
+#define SYS_FILEPORT_H_
+
+#include <mach/mach.h>
+
+#define FILEPORT_NULL ((mach_port_t)0)
+typedef mach_port_t fileport_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Minimal fileport functions for compatibility
+static inline kern_return_t fileport_makefd(fileport_t fileport, int *fd) {
+  return KERN_FAILURE;
+}
+
+static inline kern_return_t fileport_makeport(int fd, fileport_t *fileport) {
+  return KERN_FAILURE;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // SYS_FILEPORT_H_
+HEADER_EOF
+
 # Memory-saving flags for GitHub-hosted runners (7GB RAM)
 echo 'use_thin_lto=false' >> "$_src_dir/out/Default/args.gn"
 echo 'thin_lto_enable_optimizations=false' >> "$_src_dir/out/Default/args.gn"
