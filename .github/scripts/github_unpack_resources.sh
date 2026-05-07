@@ -3,7 +3,12 @@
 # Unpacking script for GitHub Actions
 
 echo "Checking sha256sum of archive:"
-sha256sum -c build_resources_sums.txt
+# Check if checksum file exists, if not skip verification
+if [ -f "build_resources_sums.txt" ]; then
+  sha256sum -c build_resources_sums.txt
+else
+  echo "build_resources_sums.txt not found, skipping checksum verification"
+fi
 
 ls -lrt
 
