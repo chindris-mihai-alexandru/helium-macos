@@ -31,12 +31,11 @@ fi
 echo 'symbol_level=0' >> "$_src_dir/out/Default/args.gn"
 echo 'chrome_pgo_phase=2' >> "$_src_dir/out/Default/args.gn"
 
-# Use macOS 14.4 deployment target to ensure compatibility
-# macOS 14.4 SDK should be available and have the required headers
-echo 'mac_deployment_target="14.4"' >> "$_src_dir/out/Default/args.gn"
+# Use macOS 14.0 deployment target for maximum compatibility
+echo 'mac_deployment_target="14.0"' >> "$_src_dir/out/Default/args.gn"
 
-# Try to use macOS 14.4 SDK if available
-echo 'mac_sdk_path="//build/mac_sdk/macosx14.4"' >> "$_src_dir/out/Default/args.gn"
+# Disable fileport functionality to avoid missing header issues
+echo 'enable_fileport=false' >> "$_src_dir/out/Default/args.gn"
 
 # Memory-saving flags for GitHub-hosted runners (7GB RAM)
 echo 'use_thin_lto=false' >> "$_src_dir/out/Default/args.gn"
