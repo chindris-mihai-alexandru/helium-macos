@@ -23,6 +23,13 @@ echo "status=running" >> $GITHUB_OUTPUT
 # Use 2 parallel jobs to stay within memory limits during linking
 _jobs=2
 
+# Force use of macOS 14.5 SDK to avoid missing sys/fileport.h on macOS 15.2 SDK
+# This is needed for GitHub-hosted runners which have the header available in 14.5
+if [ -z "$SDKROOT" ]; then
+  echo "Setting SDKROOT to macosx14.5 for compatibility..."
+  export SDKROOT=macosx14.5
+fi
+
 set +e
 
 timeout -k 7m -s SIGTERM ${_remaining_time:-19680}s ninja -C out/Default chrome chromedriver -j${_jobs}
