@@ -53,11 +53,16 @@ extern "C" {
 #endif
 
 // Minimal fileport functions for compatibility
-static inline kern_return_t fileport_makefd(fileport_t fileport, int *fd) {
+// Note: Simplified versions that match the expected signatures
+static inline kern_return_t fileport_makefd(fileport_t fileport) {
   return KERN_FAILURE;
 }
 
-static inline kern_return_t fileport_makeport(int fd, fileport_t *fileport) {
+static inline kern_return_t fileport_makeport(int fd) {
+  return KERN_FAILURE;
+}
+
+static inline kern_return_t fileport_makefd_with_fd(fileport_t fileport, int *fd) {
   return KERN_FAILURE;
 }
 
