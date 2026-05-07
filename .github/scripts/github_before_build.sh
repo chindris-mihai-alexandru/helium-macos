@@ -53,16 +53,14 @@ extern "C" {
 #endif
 
 // Minimal fileport functions for compatibility
-// Note: Simplified versions that match the expected signatures
-static inline kern_return_t fileport_makefd(fileport_t fileport) {
+// Based on the actual macOS fileport.h signatures
+static inline kern_return_t fileport_makefd(fileport_t fileport, int *fd) {
+  (void)fileport; (void)fd; // Silence unused parameter warnings
   return KERN_FAILURE;
 }
 
-static inline kern_return_t fileport_makeport(int fd) {
-  return KERN_FAILURE;
-}
-
-static inline kern_return_t fileport_makefd_with_fd(fileport_t fileport, int *fd) {
+static inline kern_return_t fileport_makeport(int fd, fileport_t *fileport) {
+  (void)fd; (void)fileport; // Silence unused parameter warnings
   return KERN_FAILURE;
 }
 
