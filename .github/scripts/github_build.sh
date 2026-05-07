@@ -25,10 +25,9 @@ _jobs=2
 
 # Force use of macOS 14.5 SDK to avoid missing sys/fileport.h on macOS 15.2 SDK
 # This is needed for GitHub-hosted runners which have the header available in 14.5
-if [ -z "$SDKROOT" ]; then
-  echo "Setting SDKROOT to macosx14.5 for compatibility..."
-  export SDKROOT=macosx14.5
-fi
+# Use || true to handle set -u (unset variables are errors)
+SDKROOT=${SDKROOT:-macosx14.5}
+echo "Using SDKROOT: $SDKROOT"
 
 set +e
 
