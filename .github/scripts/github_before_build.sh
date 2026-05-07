@@ -31,6 +31,9 @@ fi
 echo 'symbol_level=0' >> "$_src_dir/out/Default/args.gn"
 echo 'chrome_pgo_phase=2' >> "$_src_dir/out/Default/args.gn"
 
+# Force use of macOS 14.5 SDK to avoid missing sys/fileport.h on macOS 15.2 SDK
+echo 'mac_sdk_path="//build/mac_sdk/macosx14.5"' >> "$_src_dir/out/Default/args.gn"
+
 # Memory-saving flags for GitHub-hosted runners (7GB RAM)
 echo 'use_thin_lto=false' >> "$_src_dir/out/Default/args.gn"
 echo 'thin_lto_enable_optimizations=false' >> "$_src_dir/out/Default/args.gn"
