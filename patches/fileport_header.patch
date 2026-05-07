@@ -6,7 +6,9 @@
  
 +// Fallback for missing sys/fileport.h on macOS 15.2 SDK
 +// fileport.h was introduced in macOS 14.0 but may be missing from some SDK versions
-+#ifndef FILEPORT_NULL
++#if __has_include(<sys/fileport.h>)
++#include <sys/fileport.h>
++#else
 +#define FILEPORT_NULL ((mach_port_t)0)
 +typedef mach_port_t fileport_t;
 +
@@ -16,5 +18,4 @@
 +}
 +#endif
  
- #include <sys/fileport.h>
- 
+-#include <sys/fileport.h>
