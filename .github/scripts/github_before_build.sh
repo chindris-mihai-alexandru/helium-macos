@@ -34,9 +34,6 @@ echo 'chrome_pgo_phase=2' >> "$_src_dir/out/Default/args.gn"
 # Use macOS 14.0 deployment target for maximum compatibility
 echo 'mac_deployment_target="14.0"' >> "$_src_dir/out/Default/args.gn"
 
-# Disable fileport functionality to avoid missing header issues
-echo 'enable_fileport=false' >> "$_src_dir/out/Default/args.gn"
-
 # Memory-saving flags for GitHub-hosted runners (7GB RAM)
 echo 'use_thin_lto=false' >> "$_src_dir/out/Default/args.gn"
 echo 'thin_lto_enable_optimizations=false' >> "$_src_dir/out/Default/args.gn"
